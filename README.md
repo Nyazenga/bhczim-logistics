@@ -41,28 +41,40 @@ This project was developed by **Munashe Nyazenga**. You can contact me at **+263
 
 The system uses the following **Object-Oriented Programming (OOP)** data structures:
 
-1. **Package**:
-   - Represents a package with attributes like `serial_number`, `quality_mark`, `mass`, and `package_type` (loose or carton).
-   - Methods include `discard()` and `assign_location()`.
+1. **Package** (Class):
+   - Implemented using Python classes with instance attributes
+   - Uses dictionaries to store package properties
+   - Represents a package with attributes like `serial_number`, `quality_mark`, `mass`, and `package_type` (loose or carton)
+   - Methods include `discard()` and `assign_location()`
 
-2. **Pallet**:
-   - Represents a pallet that can hold loose packages of the same quality.
-   - Attributes include `serial_number`, `quality_mark`, and `max_capacity`.
-   - Methods include `add_package()` and `remove_package()`.
+2. **Pallet** (Class):
+   - Implemented as a container class
+   - Uses lists to maintain a collection of Package objects
+   - Uses dictionary for property storage
+   - Represents a pallet that can hold loose packages of the same quality
+   - Attributes include `serial_number`, `quality_mark`, and `max_capacity`
+   - Methods include `add_package()` and `remove_package()`
 
-3. **Line**:
-   - Represents a storage line in a warehouse.
-   - Attributes include `line_number`, `max_capacity`, and `capacity_type` (weight or count).
-   - Methods include `add_pallet()`, `add_carton()`, and `set_mixed_quality_approval()`.
+3. **Line** (Class):
+   - Composite data structure that contains Pallet objects and Carton objects
+   - Uses dictionaries for property storage and lists for collections
+   - Represents a storage line in a warehouse
+   - Attributes include `line_number`, `max_capacity`, and `capacity_type` (weight or count)
+   - Methods include `add_pallet()`, `add_carton()`, and `set_mixed_quality_approval()`
 
-4. **Warehouse**:
-   - Represents a warehouse that contains multiple lines.
-   - Attributes include `name`, `max_capacity`, and `lines`.
-   - Methods include `add_line()` and `get_snapshot()`.
+4. **Warehouse** (Class):
+   - Tree-like structure where the Warehouse is the root and Lines are nodes
+   - Uses dictionaries for property storage and lists for the line collection
+   - Represents a warehouse that contains multiple lines
+   - Attributes include `name`, `max_capacity`, and `lines`
+   - Methods include `add_line()` and `get_snapshot()`
 
-5. **LogisticsManager**:
-   - Manages all operations, including loading, offloading, and approving mixed quality lines.
-   - Acts as the central controller for the system.
+5. **LogisticsManager** (Singleton Class):
+   - Implements the Singleton design pattern to ensure only one instance exists
+   - Uses dictionaries to track all system entities
+   - Uses queues for order processing (FIFO/LIFO depending on configuration)
+   - Manages all operations, including loading, offloading, and approving mixed quality lines
+   - Acts as the central controller for the system
 
 ## Why an Interface Instead of Console?
 
