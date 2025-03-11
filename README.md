@@ -1,8 +1,8 @@
-# BHC Zimbabwe Logistics Management System
+# Company X Logistics Management System
 
 ## Overview
 
-This project is a **Logistics Management System** designed for BHC Zimbabwe, which handles the storage and logistics of packages in warehouses. The system automates operations such as loading and offloading packages, managing warehouse capacities, and tracking package locations. It provides a user-friendly web interface built with **Python Flask** and modern front-end technologies like **Bootstrap** and **JavaScript**.
+This project is a **Logistics Management System** designed for Company X, which handles the storage and logistics of packages in warehouses. The system automates operations such as loading and offloading packages, managing warehouse capacities, and tracking package locations. It provides a user-friendly web interface built with **Python Flask** and modern front-end technologies like **Bootstrap** and **JavaScript**.
 
 The system is designed to:
 - Manage warehouses, lines, pallets, and packages
@@ -187,4 +187,4 @@ This project was developed by Munashe Nyazenga. You can contact me at +263782794
 
 ---
 
-Thank you for using the BHC Zimbabwe Logistics Management System! If you have any questions or feedback, feel free to reach out.
+Thank you for using the Company X Logistics Management System! If you have any questions or feedback, feel free to reach out.
