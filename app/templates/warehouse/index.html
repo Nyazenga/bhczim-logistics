@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Warehouses - Company X Logistics{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h2>Warehouses</h2>
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="card-title">All Warehouses</h5>
+                    <a href="{{ url_for('warehouse.create') }}" class="btn btn-primary">Create New Warehouse</a>
+                </div>
+                <table class="table table-striped" id="warehousesTable">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Capacity</th>
+                            <th>Lines</th>
+                            <th>Usage</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for warehouse in warehouses %}
+                        <tr>
+                            <td>{{ warehouse.name }}</td>
+                            <td>{{ warehouse.max_capacity }} kg</td>
+                            <td>{{ warehouse.lines|length }}</td>
+                            <td>{{ warehouse.current_capacity_usage }} kg ({{ ((warehouse.current_capacity_usage / warehouse.max_capacity) * 100)|round(2) }}%)</td>
+                            <td>
+                                <a href="{{ url_for('warehouse.detail', serial_number=warehouse.serial_number) }}" class="btn btn-sm btn-primary">View</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function() {
+        $('#warehousesTable').DataTable();
+    });
+</script>
+{% endblock %}

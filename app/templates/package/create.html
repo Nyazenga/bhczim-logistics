@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}Create Package - Company X Logistics{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6 mx-auto">
+        <h2>Create Package</h2>
+        <div class="card">
+            <div class="card-body">
+                <form id="createPackageForm">
+                    <div class="mb-3">
+                        <label for="package_type" class="form-label">Package Type</label>
+                        <select class="form-select" id="package_type" name="package_type" required>
+                            <option value="loose">Loose</option>
+                            <option value="carton">Carton</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="quality_mark" class="form-label">Quality Mark</label>
+                        <input type="text" class="form-control" id="quality_mark" name="quality_mark" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="mass" class="form-label">Mass (kg)</label>
+                        <input type="number" class="form-control" id="mass" name="mass" step="0.01" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Create Package</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function() {
+        $('#createPackageForm').submit(function(e) {
+            e.preventDefault();
+            
+            $.ajax({
+                type: 'POST',
+                url: "{{ url_for('package.create') }}",
+                data: $(this).serialize(),
+                success: function(response) {
+                    Swal.fire({
+                        title: 'Success!',
+                        text: response.message,
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        window.location.href = "{{ url_for('package.index') }}";
+                    });
+                },
+                error: function(xhr) {
+                    const error = xhr.responseJSON;
+                    Swal.fire({
+                        title: 'Error!',
+                        text: error.message,
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

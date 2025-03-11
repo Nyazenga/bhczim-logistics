@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}{{ warehouse.name }} - Company X Logistics{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h2>{{ warehouse.name }}</h2>
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Warehouse Details</h5>
+                <div class="row">
+                    <div class="col-md-4">
+                        <p><strong>Serial Number:</strong> {{ warehouse.serial_number }}</p>
+                    </div>
+                    <div class="col-md-4">
+                        <p><strong>Capacity:</strong> {{ warehouse.current_capacity_usage }} / {{ warehouse.max_capacity }} kg</p>
+                    </div>
+                    <div class="col-md-4">
+                        <p><strong>Utilization:</strong> {{ ((warehouse.current_capacity_usage / warehouse.max_capacity) * 100)|round(2) }}%</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Lines</h5>
+                <table class="table table-striped" id="linesTable">
+                    <thead>
+                        <tr>
+                            <th>Serial Number</th>
+                            <th>Line Number</th>
+                            <th>Type</th>
+                            <th>Capacity</th>
+                            <th>Usage</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for line in warehouse.lines %}
+                        <tr>
+                            <td>{{ line.serial_number }}</td>
+                            <td>{{ line.line_number }}</td>
+                            <td>{{ line.line_type }}</td>
+                            <td>{{ line.max_capacity }} {{ 'kg' if line.capacity_type == 'weight' else 'units' }}</td>
+                            <td>{{ line.current_capacity_usage }} {{ 'kg' if line.capacity_type == 'weight' else 'units' }}</td>
+                            <td>
+                                <a href="{{ url_for('line.history', serial_number=line.serial_number) }}" class="btn btn-sm btn-primary">View</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function() {
+        $('#linesTable').DataTable();
+    });
+</script>
+{% endblock %}

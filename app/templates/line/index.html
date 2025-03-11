@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block title %}Lines - Company X Logistics{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h2>Lines</h2>
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="card-title">All Lines</h5>
+                    <a href="{{ url_for('line.create') }}" class="btn btn-primary">Create New Line</a>
+                </div>
+                <table class="table table-striped" id="linesTable">
+                    <thead>
+                        <tr>
+                            <th>Serial Number</th>
+                            <th>Line Number</th>
+                            <th>Warehouse</th>
+                            <th>Capacity Type</th>
+                            <th>Max Capacity</th>
+                            <th>Current Usage</th>
+                            <th>Mixed Quality Approved</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for line in lines %}
+                        <tr>
+                            <td>{{ line.serial_number }}</td>
+                            <td>{{ line.line_number }}</td>
+                            <td>{{ line.warehouse.name if line.warehouse else 'Unassigned' }}</td>
+                            <td>{{ line.capacity_type }}</td>
+                            <td>{{ line.max_capacity }} {{ 'kg' if line.capacity_type == 'weight' else 'units' }}</td>
+                            <td>{{ line.current_capacity_usage }} {{ 'kg' if line.capacity_type == 'weight' else 'units' }}</td>
+                            <td>{{ 'Yes' if line.mixed_quality_approved else 'No' }}</td>
+                            <td>
+                                <button class="btn btn-sm btn-primary approve-mixed-btn" data-line-id="{{ line.serial_number }}">Approve Mixed</button>
+                                <a href="{{ url_for('line.history', serial_number=line.serial_number) }}" class="btn btn-sm btn-secondary">History</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for Approve Mixed Quality -->
+<div class="modal fade" id="approveMixedModal" tabindex="-1" aria-labelledby="approveMixedModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="approveMixedModalLabel">Approve Mixed Quality</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="approveMixedForm">
+                    <input type="hidden" id="line_id" name="line_id">
+                    <div class="mb-3">
+                        <label for="max_types" class="form-label">Maximum Quality Types</label>
+                        <input type="number" class="form-control" id="max_types" name="max_types" min="1" max="3" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Approve</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+   $(document).ready(function() {
+    $('#linesTable').DataTable();
+
+    // Handle Approve Mixed Quality button click
+    $('.approve-mixed-btn').click(function() {
+        const lineId = $(this).data('line-id');
+        $('#line_id').val(lineId);
+        $('#approveMixedModal').modal('show');
+    });
+
+    // Handle Approve Mixed Quality form submission
+    $('#approveMixedForm').submit(function(e) {
+        e.preventDefault();
+        
+        const lineId = $('#line_id').val();
+        
+        $.ajax({
+            type: 'POST',
+            url: `/line/${lineId}/approve-mixed`,  // Correct URL construction
+            data: $(this).serialize(),
+            success: function(response) {
+                Swal.fire({
+                    title: 'Success!',
+                    text: response.message,
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    $('#approveMixedModal').modal('hide');
+                    window.location.reload();
+                });
+            },
+            error: function(xhr) {
+                const error = xhr.responseJSON;
+                Swal.fire({
+                    title: 'Error!',
+                    text: error.message,
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

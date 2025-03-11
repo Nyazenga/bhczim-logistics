@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Company X Logistics{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h2>Dashboard</h2>
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">System Statistics</h5>
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="card text-white bg-primary mb-3">
+                            <div class="card-body">
+                                <h6 class="card-title">Total Warehouses</h6>
+                                <p class="card-text display-4">{{ statistics.total_warehouses }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-white bg-success mb-3">
+                            <div class="card-body">
+                                <h6 class="card-title">Total Lines</h6>
+                                <p class="card-text display-4">{{ statistics.total_lines }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-white bg-info mb-3">
+                            <div class="card-body">
+                                <h6 class="card-title">Total Packages</h6>
+                                <p class="card-text display-4">{{ statistics.total_packages }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-white bg-warning mb-3">
+                            <div class="card-body">
+                                <h6 class="card-title">Total Pallets</h6>
+                                <p class="card-text display-4">{{ statistics.total_pallets }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6 class="card-title">Capacity Utilization</h6>
+                                <div class="progress">
+                                    <div class="progress-bar" role="progressbar" style="width: {{ statistics.utilization_percentage }}%;" aria-valuenow="{{ statistics.utilization_percentage }}" aria-valuemin="0" aria-valuemax="100">{{ statistics.utilization_percentage|round(2) }}%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Warehouses</h5>
+                <table class="table table-striped" id="warehousesTable">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Capacity</th>
+                            <th>Lines</th>
+                            <th>Usage</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for warehouse in warehouses %}
+                        <tr>
+                            <td>{{ warehouse.name }}</td>
+                            <td>{{ warehouse.max_capacity }} kg</td>
+                            <td>{{ warehouse.lines|length }}</td>
+                            <td>{{ warehouse.current_capacity_usage }} kg ({{ ((warehouse.current_capacity_usage / warehouse.max_capacity) * 100)|round(2) }}%)</td>
+                            <td>
+                                <a href="{{ url_for('warehouse.detail', serial_number=warehouse.serial_number) }}" class="btn btn-sm btn-primary">View</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function() {
+        $('#warehousesTable').DataTable();
+    });
+</script>
+{% endblock %}

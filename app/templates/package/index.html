@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block title %}Packages - Company X Logistics{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h2>Packages</h2>
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="card-title">All Packages</h5>
+                    <a href="{{ url_for('package.create') }}" class="btn btn-primary">Create New Package</a>
+                </div>
+                <table class="table table-striped" id="packagesTable">
+                    <thead>
+                        <tr>
+                            <th>Serial Number</th>
+                            <th>Type</th>
+                            <th>Quality Mark</th>
+                            <th>Mass (kg)</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for package in packages %}
+                        <tr>
+                            <td>{{ package.serial_number }}</td>
+                            <td>{{ package.package_type }}</td>
+                            <td>{{ package.quality_mark }}</td>
+                            <td>{{ package.mass }}</td>
+                            <td>
+                                <button class="btn btn-sm btn-primary load-to-pallet-btn" data-package-id="{{ package.serial_number }}">Load to Pallet</button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for Load to Pallet -->
+<div class="modal fade" id="loadToPalletModal" tabindex="-1" aria-labelledby="loadToPalletModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="loadToPalletModalLabel">Load Package to Pallet</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="loadToPalletForm">
+                    <input type="hidden" id="package_id" name="package_id">
+                    <div class="mb-3">
+                        <label for="pallet_id" class="form-label">Pallet Serial Number</label>
+                        <input type="text" class="form-control" id="pallet_id" name="pallet_id" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Load</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function() {
+        $('#packagesTable').DataTable();
+
+        // Handle Load to Pallet button click
+        $('.load-to-pallet-btn').click(function() {
+            const packageId = $(this).data('package-id');
+            $('#package_id').val(packageId);
+            $('#loadToPalletModal').modal('show');
+        });
+
+        // Handle Load to Pallet form submission
+        $('#loadToPalletForm').submit(function(e) {
+            e.preventDefault();
+            
+            $.ajax({
+                type: 'POST',
+                url: "{{ url_for('package.load_to_pallet') }}",
+                data: $(this).serialize(),
+                success: function(response) {
+                    Swal.fire({
+                        title: 'Success!',
+                        text: response.message,
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        $('#loadToPalletModal').modal('hide');
+                        window.location.reload();
+                    });
+                },
+                error: function(xhr) {
+                    const error = xhr.responseJSON;
+                    Swal.fire({
+                        title: 'Error!',
+                        text: error.message,
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

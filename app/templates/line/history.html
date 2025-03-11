@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}Line History - Company X Logistics{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h2>Line {{ line.line_number }} History</h2>
+        <div class="card">
+            <div class="card-body">
+                <table class="table table-striped" id="historyTable">
+                    <thead>
+                        <tr>
+                            <th>Package Serial</th>
+                            <th>Quality Mark</th>
+                            <th>Mass</th>
+                            <th>Action</th>
+                            <th>Timestamp</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for entry in history %}
+                        <tr>
+                            <td>{{ entry.package_serial }}</td>
+                            <td>{{ entry.package_quality }}</td>
+                            <td>{{ entry.package_mass }} kg</td>
+                            <td>{{ entry.action }}</td>
+                            <td>{{ entry.timestamp }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function() {
+        $('#historyTable').DataTable({
+            order: [[4, 'desc']]
+        });
+    });
+</script>
+{% endblock %}

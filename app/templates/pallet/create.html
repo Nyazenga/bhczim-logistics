@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Create Pallet - Company X Logistics{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6 mx-auto">
+        <h2>Create Pallet</h2>
+        <div class="card">
+            <div class="card-body">
+                <form id="createPalletForm">
+                    <div class="mb-3">
+                        <label for="quality_mark" class="form-label">Quality Mark</label>
+                        <input type="text" class="form-control" id="quality_mark" name="quality_mark" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="max_capacity" class="form-label">Maximum Capacity (packages)</label>
+                        <input type="number" class="form-control" id="max_capacity" name="max_capacity" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Create Pallet</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function() {
+        $('#createPalletForm').submit(function(e) {
+            e.preventDefault();
+            
+            $.ajax({
+                type: 'POST',
+                url: "{{ url_for('pallet.create') }}",
+                data: $(this).serialize(),
+                success: function(response) {
+                    Swal.fire({
+                        title: 'Success!',
+                        text: response.message,
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        window.location.href = "{{ url_for('pallet.index') }}";
+                    });
+                },
+                error: function(xhr) {
+                    const error = xhr.responseJSON;
+                    Swal.fire({
+                        title: 'Error!',
+                        text: error.message,
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

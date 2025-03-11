@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}Create Line - Company X Logistics{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6 mx-auto">
+        <h2>Create Line</h2>
+        <div class="card">
+            <div class="card-body">
+                <form id="createLineForm">
+                    <div class="mb-3">
+                        <label for="line_number" class="form-label">Line Number</label>
+                        <input type="number" class="form-control" id="line_number" name="line_number" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="max_capacity" class="form-label">Maximum Capacity</label>
+                        <input type="number" class="form-control" id="max_capacity" name="max_capacity" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="capacity_type" class="form-label">Capacity Type</label>
+                        <select class="form-select" id="capacity_type" name="capacity_type" required>
+                            <option value="weight">Weight (kg)</option>
+                            <option value="count">Count (units)</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="warehouse_id" class="form-label">Warehouse</label>
+                        <select class="form-select" id="warehouse_id" name="warehouse_id" required>
+                            {% for warehouse in warehouses %}
+                            <option value="{{ warehouse.serial_number }}">{{ warehouse.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Create Line</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function() {
+        $('#createLineForm').submit(function(e) {
+            e.preventDefault();
+            
+            $.ajax({
+                type: 'POST',
+                url: "{{ url_for('line.create') }}",
+                data: $(this).serialize(),
+                success: function(response) {
+                    Swal.fire({
+                        title: 'Success!',
+                        text: response.message,
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        window.location.href = "{{ url_for('warehouse.detail', serial_number=warehouses[0].serial_number) }}";
+                    });
+                },
+                error: function(xhr) {
+                    const error = xhr.responseJSON;
+                    Swal.fire({
+                        title: 'Error!',
+                        text: error.message,
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}
