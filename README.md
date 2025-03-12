@@ -5,8 +5,8 @@
 This project is a **Logistics Management System** designed for Company X, which handles the storage and logistics of packages in warehouses. The system automates operations such as loading and offloading packages, managing warehouse capacities, and tracking package locations. It provides a user-friendly web interface built with **Python Flask** and modern front-end technologies like **Bootstrap** and **JavaScript**.
 
 The system is designed to:
-- Manage warehouses, lines, pallets, and packages
-- Allow loading packages into pallets and lines
+- Manage warehouses, lines, pallets (also referred to as racks), and packages
+- Allow loading packages into pallets/racks and lines
 - Approve lines for mixed quality packages
 - Provide real-time snapshots of warehouse utilization
 

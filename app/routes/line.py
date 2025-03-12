@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, jsonify, current_app
+from flask import Blueprint, render_template, request, jsonify, current_app, redirect, url_for
 
 bp = Blueprint('line', __name__, url_prefix='/line')
 
@@ -15,6 +15,13 @@ def index():
 @bp.route('/create', methods=['GET', 'POST'])
 def create():
     """Create a new line"""
+    # Get all warehouses for the form
+    warehouses = current_app.warehouse_system.get_all_warehouses()
+    
+    # Check if there are no warehouses
+    if request.method == 'GET' and not warehouses:
+        return render_template('line/create.html', warehouses=[])
+    
     if request.method == 'POST':
         try:
             line_number = int(request.form['line_number'])
@@ -32,7 +39,6 @@ def create():
                 return jsonify({'status': 'error', 'message': 'Invalid capacity type'}), 400
             
             # Find warehouse
-            warehouses = current_app.warehouse_system.get_all_warehouses()
             warehouse = next((w for w in warehouses if w.serial_number == warehouse_id), None)
             
             if warehouse is None:
@@ -57,8 +63,6 @@ def create():
         except Exception as e:
             return jsonify({'status': 'error', 'message': str(e)}), 500
     
-    # Get all warehouses for the form
-    warehouses = current_app.warehouse_system.get_all_warehouses()
     return render_template('line/create.html', warehouses=warehouses)
 
 @bp.route('/<serial_number>/approve-mixed', methods=['POST'])
